@@ -3,9 +3,15 @@ import { Component } from "react";
 import { Box } from "./Box";
 import { nanoid } from "nanoid";
 import { ContactForm } from "./ContactForm/ContactForm";
-
+import { Filter } from "./Filter/Filter";
+import { ContactList } from "./ContactList/ContactList";
 
 export class App extends Component {
+  state = {
+    contacts: [],
+    filter: '',
+  };
+
 
   addContact = ({ name, number }) => {
     const { contacts } = this.state;
@@ -18,11 +24,37 @@ export class App extends Component {
       : this.setState(({ contacts }) => ({ contacts: [...contacts, contactItem], }));
   };
 
+  changeFilter = e => {
+    this.setState({ filter: e.currentTarget.value });
+  };
+
+  filteredContactList = () => {
+    const { filter, contacts } = this.state;
+    const normalizedValue = filter.toLowerCase().trim();
+    return contacts.filter(contact => contact.name.toLowerCase().includes(normalizedValue));
+  };
+
+  deleteContact = e => {
+    const contactId = e.currentTarget.id;
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
+  };
+
   render() {
+    const { filter, contacts } = this.state;
+    const {addContact, changeFilter, deleteContact} = this;
+  
     return (
       <Box>
         <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.addContact} />
+        <ContactForm onSubmit={addContact} />
+        <h2>Contacts</h2>
+        <Filter value={filter} onChange={changeFilter} />
+        {contacts.length > 0 ? (
+          <ContactList contacts={this.filteredContactList()} onDeleteButton={deleteContact} />
+        ) : (<p>Contact list is empty</p>)
+      }
         <GlobalStyle/>
       </Box>
     );
