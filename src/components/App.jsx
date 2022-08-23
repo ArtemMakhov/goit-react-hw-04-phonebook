@@ -46,7 +46,12 @@ export class App extends Component {
     const {addContact, changeFilter, deleteContact} = this;
   
     return (
-      <Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        p="16px"
+      >
         <h1>Phonebook</h1>
         <ContactForm onSubmit={addContact} />
         <h2>Contacts</h2>
