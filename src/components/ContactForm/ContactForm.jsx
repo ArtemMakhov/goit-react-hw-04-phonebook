@@ -1,42 +1,40 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useState } from 'react';
+
 import { Form, Label, Input,Btn } from './ContactForm.styled';
 
 
-export class ContactForm extends Component {
-    static propTypes = {
-        onSubmit: PropTypes.func.isRequired,
+export function ContactForm ({onSubmit})  {
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
+
+
+    const handleChange = ({ target: { name, value } }) => {
+        switch (name) {
+            case 'name':
+                setName(value);
+                break;
+            case 'number':
+                setNumber(value);
+                break;
+            default:
+                throw new Error(`Unknows  name - ${name}`);
+        }
     };
 
-    state = {
-        name: '',
-        number: '',
-    };
-
-    handleChange = e => {
-        const { name, value } = e.currentTarget;
-        this.setState({ [name]:value });
-    };
-
-    handleSubmit = e => {
+    const handleSubmit = e => {
         e.preventDefault();
-        this.props.onSubmit(this.state);
-        this.reset();
+        onSubmit({name, number});
+        reset();
     };
 
-    reset = () => {
-        this.setState({
-            name: '',
-            number: '',
-        });
+    const reset = () => {
+        setName('');
+        setNumber('');
     };
 
 
-    render() {
-        const { name, number } = this.state;
-        const { handleSubmit, handleChange } = this;
-        
-        return (
+     return (
             <Form onSubmit={handleSubmit} autoComplete="off">
                 <Label>
                     <span>Name</span>
@@ -65,5 +63,8 @@ export class ContactForm extends Component {
                 <Btn type='submit'>Add contact</Btn>
             </Form>
         );
-    }
 }
+
+Form.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+};
